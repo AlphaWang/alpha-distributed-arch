@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.alphawang.util.Printer.print;
+import static com.alphawang.distributed.util.Printer.print;
 
 /**
  * ﻿consul 启动：

@@ -14,7 +14,6 @@ import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 import java.util.concurrent.CompletableFuture;
 
 import static com.alphawang.distributed.util.Printer.print;
-import static com.alphawang.util.Printer.print;
                      
 /**
  * Created by Alpha on 1/4/18.
