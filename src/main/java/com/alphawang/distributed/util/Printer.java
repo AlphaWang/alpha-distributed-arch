@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Created by Alpha on 1/5/18.
  */
+@Deprecated
 public class Printer {
 	
 	public static void printLatency(Stopwatch stopwatch, Object o) {

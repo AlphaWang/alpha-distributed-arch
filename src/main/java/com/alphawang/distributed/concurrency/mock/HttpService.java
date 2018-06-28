@@ -1,8 +1,9 @@
 package com.alphawang.distributed.concurrency.mock;
 
-import com.alphawang.distributed.util.Printer;
 import com.google.common.base.Stopwatch;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Alpha on 1/4/18.
@@ -16,7 +17,7 @@ public class HttpService {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		Printer.printLatency(stopwatch, "[HttpService] delay 2000ms.");
+		log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "[HttpService] delay 2000ms.");
 		return "HTTP Result with 2000ms delay";
 	}
 
@@ -26,7 +27,7 @@ public class HttpService {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		Printer.printLatency(stopwatch, "[HttpService] delay 2000ms. " + id);
+		log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "[HttpService] delay 2000ms. " + id);
 		return "HTTP Result with 2000ms delay: " + id;
 	}
 }
