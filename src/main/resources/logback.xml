@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+    <!-- conf consoel out -->
+    <appender name ="console_out" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%-4r ms [%-5level] [%-16thread] %logger{0}:%L - %message%n</pattern>
+        </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="console_out" />
+    </root>
+</configuration>

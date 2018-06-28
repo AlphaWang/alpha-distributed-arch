@@ -4,6 +4,7 @@ import com.alphawang.distributed.concurrency.mock.HttpService;
 import com.alphawang.distributed.concurrency.mock.RpcService;
 import com.alphawang.distributed.util.Printer;
 import com.google.common.base.Stopwatch;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,39 +39,40 @@ import java.util.concurrent.TimeUnit;
  * [2071] [main] Main Thread END.
  *
  */
+@Slf4j
 public class C01_FutureTest {
 
 	private final static ExecutorService executor = Executors.newFixedThreadPool(2);
 
 	public static void main(String[] args) {
 		Stopwatch stopwatch = Stopwatch.createStarted();
-		Printer.printLatency(stopwatch, "Main Thread START");
+		log.warn("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "Main Thread START");
 
 		RpcService rpcService = new RpcService();
 		HttpService httpService = new HttpService();
 
 		Future<String> future1 = executor.submit(() -> {
-			Printer.printLatency(stopwatch, "submit callable 1.");
+			log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "submit callable 1.");
 			String result = rpcService.getRpcResult(stopwatch);
-			Printer.printLatency(stopwatch, "callable 1 return: " + result);
+			log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "callable 1 return: " + result);
 
 			return result;
 		});
 		Future<String> future2 = executor.submit(() -> {
-			Printer.printLatency(stopwatch, "submit callable 2.");
+			log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "submit callable 2.");
 			String result = httpService.getHttpResult(stopwatch);
-			Printer.printLatency(stopwatch, "callable 2 return: " + result);
-
+			log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "callable 2 return: " + result);
+			
 			return result;
 		});
 
-		Printer.printLatency(stopwatch, "Main Thread getting results.");
+		log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "Main Thread getting results.");
 		try {
 			String result1 = future1.get(5000, TimeUnit.MILLISECONDS);
-			Printer.printLatency(stopwatch, "Result 1 : " + result1);
+			log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "Result 1 : " + result1);
 
 			String result2 = future2.get(5000, TimeUnit.MILLISECONDS);
-			Printer.printLatency(stopwatch, "Result 2 : " + result2);
+			log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "Result 2 : " + result2);
 			
 		} catch (Exception e) {
 			if (future1 != null) {
@@ -93,7 +95,7 @@ public class C01_FutureTest {
 		 *
 		 * 缺点：高并发时依然会造成线程数过多、CPU上下文切换
 		 */
-		Printer.printLatency(stopwatch, "Main Thread END.");
+		log.warn("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "Main Thread END.");
 	}
 
 
