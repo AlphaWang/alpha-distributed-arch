@@ -1,7 +1,7 @@
 package com.alphawang.distributed.concurrency;
 
-import com.alphawang.distributed.util.Printer;
 import com.google.common.base.Stopwatch;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.concurrent.FutureCallback;
@@ -12,6 +12,7 @@ import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import static com.alphawang.distributed.util.Printer.print;
                      
@@ -37,6 +38,7 @@ import static com.alphawang.distributed.util.Printer.print;
  * [161] [I/O dispatcher 1] ==== Callback Completed.
  * **** Got Future.
  */
+@Slf4j
 public class C02_HttpAsyncClient_FutureCallbackTest {
 	
 	private static CloseableHttpAsyncClient httpAsyncClient = HttpAsyncClients.createDefault();
@@ -46,7 +48,7 @@ public class C02_HttpAsyncClient_FutureCallbackTest {
 		Stopwatch stopwatch = Stopwatch.createStarted();
 
 		httpAsyncClient.start();
-		Printer.printLatency(stopwatch, "---- HttpAsyncClient START." + url);
+		log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "---- HttpAsyncClient START." + url);
 		CompletableFuture asyncFuture = new CompletableFuture();
 
 		HttpAsyncRequestProducer producer = HttpAsyncMethods.create(new HttpPost(url));
@@ -55,32 +57,32 @@ public class C02_HttpAsyncClient_FutureCallbackTest {
 		FutureCallback callback = new FutureCallback<HttpResponse>() {
 			@Override
 			public void completed(HttpResponse response) {
-				Printer.printLatency(stopwatch, "==== Callback Completed. " + url);
+				log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "==== Callback Completed. " + url);
 				print(response.getAllHeaders());
 				asyncFuture.complete(response);
 			}
 
 			@Override
 			public void failed(Exception ex) {
-				Printer.printLatency(stopwatch, "==== Callback Failed. " + url);
+				log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "==== Callback Failed. " + url);
 				asyncFuture.completeExceptionally(ex);
 			}
 
 			@Override
 			public void cancelled() {
-				Printer.printLatency(stopwatch, "==== Call backCanceled. " + url);
+				log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "==== Call backCanceled. " + url);
 				asyncFuture.cancel(true);
 			}
 		};
 
-		Printer.printLatency(stopwatch, "---- HttpAsyncClient Executing. " + url);
+		log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "---- HttpAsyncClient Executing. " + url);
 		httpAsyncClient.execute(producer, consumer, callback);
 
 		/**
 		 * 不阻塞主线程
 		 * End 会先于 Completed 输出
 		 */
-		Printer.printLatency(stopwatch, "---- HttpAsyncClient END. " + url);
+		log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "---- HttpAsyncClient END. " + url);
 		return asyncFuture;
 	}
 
