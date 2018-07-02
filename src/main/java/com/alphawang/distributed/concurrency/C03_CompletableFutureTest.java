@@ -1,8 +1,7 @@
 package com.alphawang.distributed.concurrency;
 
-import com.alphawang.distributed.util.Printer;
-import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -19,6 +18,7 @@ import java.util.stream.Collectors;
  * ﻿CompletableFuture会在全局的 ForkJoinPool.commonPool() 中获取线程，并执行这些任务
  *
  */
+@Slf4j
 public class C03_CompletableFutureTest {
 
 
@@ -47,28 +47,26 @@ public class C03_CompletableFutureTest {
 	 */
 	private static void applyAsync() throws ExecutionException, InterruptedException {
 
-		Stopwatch stopwatch = Stopwatch.createStarted();
+		CompletableFuture<String> future1 = service.getHttpData("http://wwww.jd.com");
+		CompletableFuture<String> future2 = service.getHttpData("http://wwww.taobao.com");
+		CompletableFuture<String> future3 = service.getHttpData("http://wwww.baidu.com");
 
-		CompletableFuture<String> future1 = service.getHttpData(stopwatch, "http://wwww.jd.com");
-		CompletableFuture<String> future2 = service.getHttpData(stopwatch,"http://wwww.taobao.com");
-		CompletableFuture<String> future3 = service.getHttpData(stopwatch,"http://wwww.baidu.com");
-
-		Printer.printLatency(stopwatch, "Started 3 calls.");
+		log.info("Started 3 calls.");
 
 		CompletableFuture<Void> allFutures = CompletableFuture.allOf(future1, future2, future3);
 
 		CompletableFuture<String> futureTest = allFutures
 			.thenApplyAsync(response -> {
-				Printer.printLatency(stopwatch, "allOf().applyAsync()1 start. " + response);  //TODO why it's null?  因为allOf返回的是Void.
+				log.info("allOf().applyAsync()1 start. " + response); //TODO why it's null?  因为allOf返回的是Void.
 				return response + "-TEST";
 			}).exceptionally(e -> {
-				Printer.printLatency(stopwatch, "allOf().applyAsync()1 Exception.");
+				log.error("allOf().applyAsync()1 Exception.");
 				e.printStackTrace();
 				return "Exception...";
 			});
 
 		CompletableFuture<List<String>> allFutures2 = allFutures.thenApplyAsync(v -> {
-			Printer.printLatency(stopwatch, "allOf().applyAsync()2 start.");
+			log.info("allOf().applyAsync()2 start.");
 			try {
 				Thread.sleep(1500);
 			} catch (InterruptedException e) {
@@ -79,19 +77,19 @@ public class C03_CompletableFutureTest {
 				.map(future -> future.join())
 				.collect(Collectors.toList());
 
-			Printer.printLatency(stopwatch, "allOf().applyAsync()2 join (+1500ms delay). " + response);
+			log.info("allOf().applyAsync()2 join (+1500ms delay). " + response);
 			return response;
 		});
 
 		// 这一句会先于thenApplyAsync打印！因为不阻塞主线程
-		Printer.printLatency(stopwatch,">>>>>> Try to get Result ");
+		log.warn(">>>>>> Try to get Result ");
 
 		// 此处阻塞
 		List<String> s2 = allFutures2.get();
-		Printer.printLatency(stopwatch,">>>>>> Got result : allOf().applyAsync()2: " + s2);
+		log.warn(">>>>>> Got result : allOf().applyAsync()2: " + s2);
 
 		String s = futureTest.get();
-		Printer.printLatency(stopwatch,">>>>>> Got result : allOf().applyAsync()1: " + s);
+		log.warn( ">>>>>> Got result : allOf().applyAsync()1: " + s);
 	}
 
 	/**
@@ -113,13 +111,12 @@ public class C03_CompletableFutureTest {
 	 *
 	 */
 	public static void applySync() throws ExecutionException, InterruptedException {
-		Stopwatch stopwatch = Stopwatch.createStarted();
 
-		CompletableFuture<String> future1 = service.getHttpData(stopwatch,"http://wwww.jd.com");
-		CompletableFuture<String> future2 = service.getHttpData(stopwatch,"http://wwww.taobao.com");
-		CompletableFuture<String> future3 = service.getHttpData(stopwatch,"http://wwww.baidu.com");
+		CompletableFuture<String> future1 = service.getHttpData("http://wwww.jd.com");
+		CompletableFuture<String> future2 = service.getHttpData("http://wwww.taobao.com");
+		CompletableFuture<String> future3 = service.getHttpData("http://wwww.baidu.com");
 
-		Printer.printLatency(stopwatch, "Started 3 calls.");
+		log.info("Started 3 calls.");
 
 		CompletableFuture<Void> futures = CompletableFuture.allOf(future1, future2, future3);
 
@@ -128,7 +125,7 @@ public class C03_CompletableFutureTest {
 			.thenApply((Void) -> {
 				try {
 					Thread.sleep(1500);
-					Printer.printLatency(stopwatch, "allOf().thenApply() with 1500ms delay.");
+					log.info("allOf().thenApply() with 1500ms delay.");
 
 					return Lists.newArrayList(future1.get(), future2.get(), future3.get());
 				} catch (InterruptedException e) {
@@ -139,16 +136,16 @@ public class C03_CompletableFutureTest {
 					return null;
 				}
 			}).exceptionally(e -> {
-				Printer.printLatency(stopwatch, "allOf().thenApply() Exception.");
+				log.error("allOf().thenApply() Exception.");
 				e.printStackTrace();
 				return null;
 			});
 
 		// TODO 这一句一定在thenApply之后打印，因为阻塞主线程
-		Printer.printLatency(stopwatch, ">>>>>> Try Future.get()");
+		log.warn(">>>>>> Try Future.get()");
 
 		List s = future.get();
-		Printer.printLatency(stopwatch,">>>>>> Got result : " + s);
+		log.warn( ">>>>>> Got result : " + s);
 	}
 
 	/**
@@ -169,11 +166,10 @@ public class C03_CompletableFutureTest {
 	 *
 	 */
 	private static void acceptBothAsync() throws ExecutionException, InterruptedException {
-		Stopwatch stopwatch = Stopwatch.createStarted();
 
-		CompletableFuture<String> future1 = service.getHttpData(stopwatch,"http://wwww.jd.com");
-		CompletableFuture<String> future2 = service.getHttpData(stopwatch,"http://wwww.taobao.com");
-		Printer.printLatency(stopwatch, "Started 2 calls.");
+		CompletableFuture<String> future1 = service.getHttpData("http://wwww.jd.com");
+		CompletableFuture<String> future2 = service.getHttpData("http://wwww.taobao.com");
+		log.info("Started 2 calls.");
 
 		CompletableFuture<Void> future = future1.thenAcceptBothAsync(future2, (result1, result2) -> {
 			try {
@@ -182,16 +178,16 @@ public class C03_CompletableFutureTest {
 				e.printStackTrace();
 			}
 			List result = Lists.newArrayList(result1, result2);
-			Printer.printLatency(stopwatch, "future1.thenAcceptBothAsync() with 1500ms delay: " + result);
+			log.info("future1.thenAcceptBothAsync() with 1500ms delay: " + result);
 //			return  //这是消费结果，不能返回
 		}).exceptionally(e -> {
 			return null;
 		});
 
 		// 提前打印，因为不阻塞主线程
-		Printer.printLatency(stopwatch, ">>>>>> Try to get Result ");
+		log.warn(">>>>>> Try to get Result ");
 		Void s = future.get();
-		Printer.printLatency(stopwatch, ">>>>>> result : " + s);
+		log.warn(">>>>>> result : " + s);
 	}
 
 	/**
@@ -213,10 +209,9 @@ public class C03_CompletableFutureTest {
 	 * ******* END
 	 */
 	private static void flow() throws ExecutionException, InterruptedException {
-		Stopwatch stopwatch = Stopwatch.createStarted();
 
-		CompletableFuture<String> future1 = service.getHttpData(stopwatch,"http://wwww.jd.com");
-		Printer.printLatency(stopwatch, "Started 1st call.");
+		CompletableFuture<String> future1 = service.getHttpData("http://wwww.jd.com");
+		log.info("Started 1st call.");
 
 		CompletableFuture<String> future2 = future1.thenApplyAsync((v) -> {
 			try {
@@ -224,12 +219,12 @@ public class C03_CompletableFutureTest {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			Printer.printLatency(stopwatch, "future2 = future1.thenApplyAsync() with 1500ms delay: " + v);
+			log.info("future2 = future1.thenApplyAsync() with 1500ms delay: " + v);
 			return "result from #2" +v;
 		});
 
-		CompletableFuture<String> future3 = service.getHttpData(stopwatch,"http://wwww.baidu.com");
-		Printer.printLatency(stopwatch, "Started 3rd call.");
+		CompletableFuture<String> future3 = service.getHttpData("http://wwww.baidu.com");
+		log.info("Started 3rd call.");
 
 		CompletableFuture<String> result = future2.thenCombineAsync(future3, (result2, result3) -> {
 			try {
@@ -238,27 +233,27 @@ public class C03_CompletableFutureTest {
 				e.printStackTrace();
 			}
 
-			Printer.printLatency(stopwatch, "future2.thenCombineAsync(future3) with 2500ms delay: " + result2 + result3);
+			log.info("future2.thenCombineAsync(future3) with 2500ms delay: " + result2 + result3);
 
 			return result2 + result3;
 		}).exceptionally(e -> {
 			return null;
 		});
 
-		Printer.printLatency(stopwatch, ">>>>>> Try to get Result ");
+		log.warn(">>>>>> Try to get Result ");
 		String s = result.get();
-		Printer.printLatency(stopwatch, ">>>>>> result : " + s);
+		log.warn(">>>>>> result : " + s);
 	}
 
 	private static class Service {
-		public CompletableFuture<String> getHttpData(Stopwatch stopwatch, String url) {
+		public CompletableFuture<String> getHttpData(String url) {
 			return CompletableFuture.supplyAsync(() -> {
 				try {
 					Thread.sleep(1000);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
-				Printer.printLatency(stopwatch, "[Service][Mock Data with 1000ms delay]" + url);
+				log.info("[Service][Mock Data with 1000ms delay]" + url);
 				return "[Mock Data with 1000ms delay]" + url;
 			});
 		}
@@ -266,14 +261,14 @@ public class C03_CompletableFutureTest {
 
 	public static void main(String[] args) {
 		try {
-			Printer.print("******* START");
+			log.warn("******* START");
 
 //			applyAsync();
 			applySync();
 //			acceptBothAsync();
 //			flow();
 
-			Printer.print("******* END");
+			log.warn("******* END");
 			Thread.sleep(3000);
 		} catch (Exception e) {
 			e.printStackTrace();
