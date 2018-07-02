@@ -53,14 +53,14 @@ public class C01_FutureTest {
 
 		Future<String> future1 = executor.submit(() -> {
 			log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "submit callable 1.");
-			String result = rpcService.getRpcResult(stopwatch);
+			String result = rpcService.getRpcResult();
 			log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "callable 1 return: " + result);
 
 			return result;
 		});
 		Future<String> future2 = executor.submit(() -> {
 			log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "submit callable 2.");
-			String result = httpService.getHttpResult(stopwatch);
+			String result = httpService.getHttpResult();
 			log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "callable 2 return: " + result);
 			
 			return result;
@@ -95,7 +95,7 @@ public class C01_FutureTest {
 		 *
 		 * 缺点：高并发时依然会造成线程数过多、CPU上下文切换
 		 */
-		log.warn("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "Main Thread END.");
+		log.warn("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "Main Thread END. 会阻塞主线程, 所以这一句总是最后打印");
 	}
 
 

@@ -54,7 +54,7 @@ public class C04_BatchCall {
 			futures.add(CompletableFuture.supplyAsync(new Supplier<String>() {
 				@Override
 				public String get() {
-					return httpService.getHttpResult(stopwatch);
+					return httpService.getHttpResult();
 				}
 			}));
 		}

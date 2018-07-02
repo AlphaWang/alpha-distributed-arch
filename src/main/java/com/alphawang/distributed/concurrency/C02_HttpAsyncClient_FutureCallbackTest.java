@@ -1,6 +1,5 @@
 package com.alphawang.distributed.concurrency;
 
-import com.google.common.base.Stopwatch;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -12,7 +11,6 @@ import org.apache.http.nio.protocol.BasicAsyncResponseConsumer;
 import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
 
 import static com.alphawang.distributed.util.Printer.print;
                      
@@ -45,10 +43,8 @@ public class C02_HttpAsyncClient_FutureCallbackTest {
 
 	public static CompletableFuture<HttpResponse> getHttpData(String url) {
 
-		Stopwatch stopwatch = Stopwatch.createStarted();
-
 		httpAsyncClient.start();
-		log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "---- HttpAsyncClient START." + url);
+		log.info("---- HttpAsyncClient START." + url);
 		CompletableFuture asyncFuture = new CompletableFuture();
 
 		HttpAsyncRequestProducer producer = HttpAsyncMethods.create(new HttpPost(url));
@@ -57,41 +53,41 @@ public class C02_HttpAsyncClient_FutureCallbackTest {
 		FutureCallback callback = new FutureCallback<HttpResponse>() {
 			@Override
 			public void completed(HttpResponse response) {
-				log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "==== Callback Completed. " + url);
+				log.info("==== Callback Completed. " + url);
 				print(response.getAllHeaders());
 				asyncFuture.complete(response);
 			}
 
 			@Override
 			public void failed(Exception ex) {
-				log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "==== Callback Failed. " + url);
+				log.error("==== Callback Failed. " + url);
 				asyncFuture.completeExceptionally(ex);
 			}
 
 			@Override
 			public void cancelled() {
-				log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "==== Call backCanceled. " + url);
+				log.warn("==== Call backCanceled. " + url);
 				asyncFuture.cancel(true);
 			}
 		};
 
-		log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "---- HttpAsyncClient Executing. " + url);
+		log.info("---- HttpAsyncClient Executing. " + url);
 		httpAsyncClient.execute(producer, consumer, callback);
 
 		/**
 		 * 不阻塞主线程
 		 * End 会先于 Completed 输出
 		 */
-		log.info("[{}] {}", stopwatch.elapsed(TimeUnit.MILLISECONDS), "---- HttpAsyncClient END. " + url);
+		log.info("---- HttpAsyncClient END. " + url);
 		return asyncFuture;
 	}
 
 	public static void main(String[] args) {
 		CompletableFuture<HttpResponse> completableFuture = C02_HttpAsyncClient_FutureCallbackTest.getHttpData("http://www.jd.com");
 		try {
-			print("**** Getting Future.");
+			log.warn("**** Getting Future.");
 			Object result = completableFuture.get();
-			print("**** Got Future.");
+			log.warn("**** Got Future.");
 
 			System.out.print(result);
 		} catch (Exception e) {

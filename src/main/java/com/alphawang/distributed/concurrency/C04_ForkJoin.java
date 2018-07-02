@@ -59,7 +59,7 @@ public class C04_ForkJoin {
 			ForkJoinTask<String> task = forkJoinPool.submit(new Callable<String>() {
 				@Override
 				public String call() throws Exception {
-					return httpService.getHttpResult(stopwatch, finalI);
+					return httpService.getHttpResult(finalI);
 				}
 			});
 
@@ -108,7 +108,7 @@ public class C04_ForkJoin {
 
 		Callable<List<String>> task = () -> services.parallelStream().map(new Function<HttpService, String>() {
 			@Override public String apply(HttpService httpService) {
-				return httpService.getHttpResult(stopwatch);
+				return httpService.getHttpResult();
 			}
 		}).collect(Collectors.toList());
 
