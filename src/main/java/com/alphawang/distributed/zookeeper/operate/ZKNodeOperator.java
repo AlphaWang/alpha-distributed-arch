@@ -93,6 +93,11 @@ public class ZKNodeOperator {
         }
     }
 
+    /**
+     * 推荐使用回调方式删除，否则得不到通知。
+     * @param path
+     * @param version
+     */
     public void deleteZKNodeAsync(String path, int version) {
 //        try {
             zooKeeper.delete(path, version, new ZkDeleteCallback(), "TEST Ctx delete");
