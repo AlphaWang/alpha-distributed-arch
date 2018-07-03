@@ -1,12 +1,10 @@
 package com.alphawang.distributed.zookeeper.connect;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.ZooKeeper;
 
 @Slf4j
 public class ZKConnector {
-
 
         public static final String zkServerPath = "127.0.0.1:2181";
         //	public static final String zkServerPath = "192.168.1.111:2181,192.168.1.111:2182,192.168.1.111:2183";

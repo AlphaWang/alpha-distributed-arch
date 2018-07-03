@@ -6,6 +6,7 @@ import org.apache.zookeeper.Watcher;
 
 @Slf4j
 public class ZKWatcher implements Watcher {
+    
     @Override 
     public void process(WatchedEvent event) {
         log.info(">>> Watcher: accepted event {}", event);
