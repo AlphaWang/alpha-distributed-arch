@@ -8,6 +8,6 @@ import org.apache.zookeeper.data.Stat;
 public class ZkStatCallback implements AsyncCallback.StatCallback {
     @Override 
     public void processResult(int rc, String path, Object ctx, Stat stat) {
-        log.warn(">>>> StatCallback: rc={}, path={}, ctx={}, stat={}", rc, path, ctx, stat);
+        log.warn("[StatCallback] >>>> rc={}, path={}, ctx={}, stat={}", rc, path, ctx, stat);
     }
 }

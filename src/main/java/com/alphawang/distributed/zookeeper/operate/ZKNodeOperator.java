@@ -1,6 +1,6 @@
 package com.alphawang.distributed.zookeeper.operate;
 
-import com.alphawang.distributed.zookeeper.callback.ZkDeleteCallback;
+import com.alphawang.distributed.zookeeper.callback.ZkVoidCallback;
 import com.alphawang.distributed.zookeeper.callback.ZkStatCallback;
 import com.alphawang.distributed.zookeeper.connect.ZKWatcher;
 import lombok.Data;
@@ -17,14 +17,14 @@ import java.util.List;
 
 @Slf4j
 @Data
-public class ZKNodeOperator {
+public class ZkNodeOperator {
     
     private ZooKeeper zooKeeper;
     
     private static final String zkServerPath = "127.0.0.1:2181";
     private static final int timeout = 50000000;
     
-    public ZKNodeOperator(String server) {
+    public ZkNodeOperator(String server) {
         try {
             zooKeeper = new ZooKeeper(server, timeout, new ZKWatcher());
         } catch (IOException e) {
@@ -100,7 +100,7 @@ public class ZKNodeOperator {
      */
     public void deleteZKNodeAsync(String path, int version) {
 //        try {
-            zooKeeper.delete(path, version, new ZkDeleteCallback(), "TEST Ctx delete");
+            zooKeeper.delete(path, version, new ZkVoidCallback(), "TEST Ctx delete");
             log.info("Delete node async: {} {}", path, version);
 //            Thread.sleep(2000);
 //        } catch (InterruptedException e) {
@@ -109,7 +109,7 @@ public class ZKNodeOperator {
     }
 
     public static void main(String[] args) {
-        ZKNodeOperator operator = new ZKNodeOperator(zkServerPath);
+        ZkNodeOperator operator = new ZkNodeOperator(zkServerPath);
         
         operator.createZKNode("/testnode", "testnode-data".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE);
         operator.setZKNode("/testnode", "testnode-data-2".getBytes(), 0);

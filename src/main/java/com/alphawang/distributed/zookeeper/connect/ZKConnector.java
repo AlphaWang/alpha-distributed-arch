@@ -1,15 +1,40 @@
 package com.alphawang.distributed.zookeeper.connect;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.ZooKeeper;
 
+import java.io.IOException;
+
 @Slf4j
+@Getter
 public class ZKConnector {
 
-        public static final String zkServerPath = "127.0.0.1:2181";
+        private static final String zkServerPath = "127.0.0.1:2181";
         //	public static final String zkServerPath = "192.168.1.111:2181,192.168.1.111:2182,192.168.1.111:2183";
-        public static final Integer timeout = 5000;
+        private static final Integer timeout = 5000;
 
+        private ZooKeeper zooKeeper;
+        
+        public ZKConnector() {
+            try {
+                zooKeeper = new ZooKeeper(zkServerPath, timeout, new ZKWatcher());
+            } catch (IOException e) {
+                log.error("Failed to connect zk server.", e);
+                close();
+            }
+        }
+        
+        public void close() {
+            if (zooKeeper != null) {
+                try {
+                    zooKeeper.close();
+                } catch (InterruptedException e1) {
+                    log.error("Failed to close zk connection.", e1);
+                }
+            }
+        }
+        
         public static void main(String[] args) throws Exception {
             /**
              * 客户端和zk服务端链接是一个异步的过程
