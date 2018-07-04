@@ -108,7 +108,7 @@ public class ZKNodeOperator {
 //        }
     }
 
-    public static void main(String[] args) throws KeeperException, InterruptedException {
+    public static void main(String[] args) {
         ZKNodeOperator operator = new ZKNodeOperator(zkServerPath);
         
         operator.createZKNode("/testnode", "testnode-data".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE);
