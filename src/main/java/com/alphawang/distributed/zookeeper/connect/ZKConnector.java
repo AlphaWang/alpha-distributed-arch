@@ -12,7 +12,7 @@ public class ZKConnector {
 
         private static final String zkServerPath = "127.0.0.1:2181";
         //	public static final String zkServerPath = "192.168.1.111:2181,192.168.1.111:2182,192.168.1.111:2183";
-        private static final Integer timeout = 5000;
+        private static final Integer timeout = 500000;
 
         private ZooKeeper zooKeeper;
         
