@@ -66,7 +66,7 @@ public class ZkNodeOperator {
     public void setZKNode(String path, byte[] data, int version) {
         try {
             Stat stat = zooKeeper.setData(path, data, version);
-            log.info("Set node: {}; result: {}", path, stat);
+            log.info("Set node: {}; result: {}; version: {}", path, stat, stat.getVersion());
 //            Thread.sleep(2000);
         } catch (KeeperException | InterruptedException e) {
             log.error("Failed to set node: {}", path, e);
