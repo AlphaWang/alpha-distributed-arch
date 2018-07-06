@@ -9,7 +9,7 @@ import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.data.Stat;
 
 /**
- * zkCli : getAcl path
+ * zkCli > getAcl path
  */
 @Slf4j
 public class ZkNodeAcl {
@@ -17,8 +17,14 @@ public class ZkNodeAcl {
     public static void main(String[] args) throws InterruptedException, KeeperException {
         ZKConnector connector = new ZKConnector();
 
-        // acl 任何人都可以访问
-        connector.getZooKeeper().create("/aclimooc", "test".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+        /**
+         * acl 任何人都可以访问
+         * 
+         * zkCli > getAcl /imooc/acl
+         * 'world,'anyone
+         * : cdrwa
+         */
+        connector.getZooKeeper().create("/imooc/acl", "test".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
     }
 
 }
