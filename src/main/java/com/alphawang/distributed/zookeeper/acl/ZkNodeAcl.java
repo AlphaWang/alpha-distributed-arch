@@ -17,6 +17,12 @@ import java.util.List;
 
 /**
  * zkCli > getAcl path
+ * 
+ * 
+ * Clean zk data before execute:
+ * 
+ * > addauth digest imooc1:123456
+ * > rmr /imooc/acl
  */
 @Slf4j
 public class ZkNodeAcl {
@@ -38,7 +44,7 @@ public class ZkNodeAcl {
          *   'world,'anyone
          *   : cdrwa
          */
-        connector.getZooKeeper().create("/imooc/acl", "test".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+        connector.getZooKeeper().create("/imooc/acl", "test".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 
         /**
          * 2. 自定义用户认证访问
@@ -46,7 +52,7 @@ public class ZkNodeAcl {
          * zkCli (setAcl scheme:id:permissions) 
          * 
          * > setAcl /imooc/acl/digest digest:imooc1:ee8R/pr2P4sGnQYNGyw2M5S5IMU=:cdrwa
-         *          
+         * > addAuth digest imooc1:123456         
          *          
          * zkCli (getAcl)  
          * 
@@ -58,14 +64,23 @@ public class ZkNodeAcl {
          *  'digest,'imooc2:eBdFG0gQw0YArfEFDCRP3LzIp6k=
          *  : cd
          */
-       
+        String digestPath = "/imooc/acl/digest";
         List<ACL> acls = new ArrayList<ACL>();
         Id imooc1 = new Id("digest", DigestAuthenticationProvider.generateDigest("imooc1:123456"));
         Id imooc2 = new Id("digest", DigestAuthenticationProvider.generateDigest("imooc2:123456"));
         acls.add(new ACL(ZooDefs.Perms.ALL, imooc1));
         acls.add(new ACL(ZooDefs.Perms.READ, imooc2));
         acls.add(new ACL(ZooDefs.Perms.DELETE | ZooDefs.Perms.CREATE, imooc2));
-        connector.getZooKeeper().create("/imooc/acl/digest", "testdigest".getBytes(), acls, CreateMode.EPHEMERAL);
+        connector.getZooKeeper().create(digestPath, "testdigest".getBytes(), acls, CreateMode.PERSISTENT);
+
+        // 注册过的用户必须通过addAuthInfo才能操作节点，参考命令行 addauth
+        connector.getZooKeeper().addAuthInfo("digest", "imooc1:123456".getBytes());
+        connector.getZooKeeper().create(digestPath+ "/childtest", "childtest".getBytes(), ZooDefs.Ids.CREATOR_ALL_ACL, CreateMode.EPHEMERAL);
+       
+        Stat stat = new Stat();
+        byte[] data = connector.getZooKeeper().getData(digestPath, false, stat);
+        log.info("get data for {} : {}", digestPath, new String(data));
+        connector.getZooKeeper().setData(digestPath, "now".getBytes(), 0);
     }
 
 }
