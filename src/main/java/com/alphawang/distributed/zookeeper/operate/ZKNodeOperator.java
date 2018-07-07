@@ -56,7 +56,7 @@ public class ZkNodeOperator {
     public void createZKNode(String path, byte[] data, List<ACL> acls) {
         try {
             log.info("--- try to create node {}", path);
-            String result = zooKeeper.create(path, data, acls, CreateMode.PERSISTENT);
+            String result = zooKeeper.create(path, data, acls, CreateMode.EPHEMERAL);
             log.info("Created node: {}, result: {}", path, result);
 //            Thread.sleep(2000);
         } catch (KeeperException | InterruptedException e) {
