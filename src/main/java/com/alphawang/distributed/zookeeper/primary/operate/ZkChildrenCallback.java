@@ -1,6 +1,6 @@
-package com.alphawang.distributed.zookeeper.operate;
+package com.alphawang.distributed.zookeeper.primary.operate;
 
-import com.alphawang.distributed.zookeeper.connect.ZKConnector;
+import com.alphawang.distributed.zookeeper.primary.connect.ZKConnector;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.AsyncCallback;
 import org.apache.zookeeper.data.Stat;

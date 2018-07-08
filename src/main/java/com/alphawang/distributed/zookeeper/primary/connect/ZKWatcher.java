@@ -1,4 +1,4 @@
-package com.alphawang.distributed.zookeeper.connect;
+package com.alphawang.distributed.zookeeper.primary.connect;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;

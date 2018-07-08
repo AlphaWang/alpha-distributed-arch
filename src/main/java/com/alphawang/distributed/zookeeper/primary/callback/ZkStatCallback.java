@@ -1,4 +1,4 @@
-package com.alphawang.distributed.zookeeper.callback;
+package com.alphawang.distributed.zookeeper.primary.callback;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.AsyncCallback;

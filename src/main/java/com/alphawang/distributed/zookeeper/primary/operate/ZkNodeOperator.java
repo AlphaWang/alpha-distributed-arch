@@ -1,8 +1,8 @@
-package com.alphawang.distributed.zookeeper.operate;
+package com.alphawang.distributed.zookeeper.primary.operate;
 
-import com.alphawang.distributed.zookeeper.callback.ZkVoidCallback;
-import com.alphawang.distributed.zookeeper.callback.ZkStatCallback;
-import com.alphawang.distributed.zookeeper.connect.ZKWatcher;
+import com.alphawang.distributed.zookeeper.primary.callback.ZkVoidCallback;
+import com.alphawang.distributed.zookeeper.primary.callback.ZkStatCallback;
+import com.alphawang.distributed.zookeeper.primary.connect.ZKWatcher;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;

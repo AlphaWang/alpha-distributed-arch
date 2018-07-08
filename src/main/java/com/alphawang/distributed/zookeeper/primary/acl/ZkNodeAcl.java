@@ -1,7 +1,6 @@
-package com.alphawang.distributed.zookeeper.acl;
+package com.alphawang.distributed.zookeeper.primary.acl;
 
-import com.alphawang.distributed.zookeeper.connect.ZKConnector;
-import com.alphawang.distributed.zookeeper.connect.ZKWatcher;
+import com.alphawang.distributed.zookeeper.primary.connect.ZKConnector;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.KeeperException;
