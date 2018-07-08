@@ -18,14 +18,20 @@ import java.util.List;
 /**
  * zkCli > getAcl path
  * 
+ * setAcl /imooc/acl world:anyone:cdrwa
+ * setAcl /imooc/acl auth:imooc:imooc:cdrwa   //设置之前需要 addauth; 此命令可简写为setAcl /imooc/acl auth::cdrwa 
+ * setAcl /imooc/acl digest:imooc:XXX:cdrwa
+ * setAcl /imooc/acl ip:192.168.1.1:cdrwa
  * 
  * Clean zk data before execute:
- * 
  * > addauth digest imooc1:123456
  * > rmr /imooc/acl
  */
 @Slf4j
 public class ZkNodeAcl {
+    
+    private static final String LOCAL_IP = "127.0.0.1";
+    private static final String REMOTE_IP = "192.168.1.10";
 
     public static void main(String[] args) throws InterruptedException, KeeperException, NoSuchAlgorithmException {
         ZKConnector connector = new ZKConnector();
@@ -67,11 +73,12 @@ public class ZkNodeAcl {
          */
         String digestPath = "/imooc/acl/digest";
         List<ACL> acls = new ArrayList<ACL>();
-        Id imooc1 = new Id("digest", DigestAuthenticationProvider.generateDigest("imooc1:123456"));
-        Id imooc2 = new Id("digest", DigestAuthenticationProvider.generateDigest("imooc2:123456"));
-        acls.add(new ACL(ZooDefs.Perms.ALL, imooc1));
-        acls.add(new ACL(ZooDefs.Perms.READ, imooc2));
-        acls.add(new ACL(ZooDefs.Perms.DELETE | ZooDefs.Perms.CREATE, imooc2));
+        // TODO Q: why not create enum for scheme "digest"?
+        Id id_imooc1 = new Id("digest", DigestAuthenticationProvider.generateDigest("imooc1:123456"));
+        Id id_imooc2 = new Id("digest", DigestAuthenticationProvider.generateDigest("imooc2:123456"));
+        acls.add(new ACL(ZooDefs.Perms.ALL, id_imooc1));
+        acls.add(new ACL(ZooDefs.Perms.READ, id_imooc2));
+        acls.add(new ACL(ZooDefs.Perms.DELETE | ZooDefs.Perms.CREATE, id_imooc2));
 
         log.info("2.1 create Node {} with digest ACLs: {}", digestPath, acls);
         connector.getZooKeeper().create(digestPath, "testdigest".getBytes(), acls, CreateMode.PERSISTENT);
@@ -85,6 +92,38 @@ public class ZkNodeAcl {
         byte[] data = connector.getZooKeeper().getData(digestPath, false, stat);
         log.info("2.3 get data for {} : {}", digestPath, new String(data));
         connector.getZooKeeper().setData(digestPath, "now".getBytes(), 0);
+
+        /**
+         *  3. ip ACL.
+         *  
+         *  > setAcl path ip:192.168.1.1:cdrwa
+         */
+        String pathForLocalIp = "/imooc/acl/ip-local";
+        String pathForRemoteIp = "/imooc/acl/ip-remote";
+        
+        List<ACL> aclsIP = new ArrayList<ACL>();
+        Id id_ip1 = new Id("ip", LOCAL_IP);  //REMOTE_IP
+        aclsIP.add(new ACL(ZooDefs.Perms.ALL, id_ip1));
+
+        log.info("3.1 create Node {} with ip ACLs: {}", pathForLocalIp, aclsIP);
+        connector.getZooKeeper().create(pathForLocalIp, "local-ip-data".getBytes(), aclsIP, CreateMode.PERSISTENT);
+        
+        data = connector.getZooKeeper().getData(pathForLocalIp, false, stat);
+        log.info("3.2 get data for {} : {}", pathForLocalIp, new String(data));
+
+        
+
+        List<ACL> aclsIP2 = new ArrayList<ACL>();
+        Id id_ip2 = new Id("ip", REMOTE_IP);
+        aclsIP2.add(new ACL(ZooDefs.Perms.ALL, id_ip2));
+
+        log.info("3.2 create Node {} with ip ACLs: {}", pathForRemoteIp, aclsIP);
+        connector.getZooKeeper().create(pathForRemoteIp, "remote-ip-data".getBytes(), aclsIP2, CreateMode.PERSISTENT);
+
+        data = connector.getZooKeeper().getData(pathForRemoteIp, false, stat);
+        log.info("3.2 get data for {} : {}", pathForRemoteIp, new String(data));
+        
+        
     }
 
 }
