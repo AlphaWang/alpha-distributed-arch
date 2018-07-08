@@ -44,6 +44,7 @@ public class ZkNodeAcl {
          *   'world,'anyone
          *   : cdrwa
          */
+        log.info("1. create Node {} with OPEN_ACL_UNSAFE: {}", "/imooc/acl", ZooDefs.Ids.OPEN_ACL_UNSAFE);
         connector.getZooKeeper().create("/imooc/acl", "test".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
 
         /**
@@ -71,15 +72,18 @@ public class ZkNodeAcl {
         acls.add(new ACL(ZooDefs.Perms.ALL, imooc1));
         acls.add(new ACL(ZooDefs.Perms.READ, imooc2));
         acls.add(new ACL(ZooDefs.Perms.DELETE | ZooDefs.Perms.CREATE, imooc2));
+
+        log.info("2.1 create Node {} with digest ACLs: {}", digestPath, acls);
         connector.getZooKeeper().create(digestPath, "testdigest".getBytes(), acls, CreateMode.PERSISTENT);
 
         // 注册过的用户必须通过addAuthInfo才能操作节点，参考命令行 addauth
+        log.info("2.2 create child Node with digest auth {}.", "imooc1:123456");
         connector.getZooKeeper().addAuthInfo("digest", "imooc1:123456".getBytes());
-        connector.getZooKeeper().create(digestPath+ "/childtest", "childtest".getBytes(), ZooDefs.Ids.CREATOR_ALL_ACL, CreateMode.EPHEMERAL);
+        connector.getZooKeeper().create(digestPath + "/childtest", "childtest".getBytes(), ZooDefs.Ids.CREATOR_ALL_ACL, CreateMode.EPHEMERAL);
        
         Stat stat = new Stat();
         byte[] data = connector.getZooKeeper().getData(digestPath, false, stat);
-        log.info("get data for {} : {}", digestPath, new String(data));
+        log.info("2.3 get data for {} : {}", digestPath, new String(data));
         connector.getZooKeeper().setData(digestPath, "now".getBytes(), 0);
     }
 
