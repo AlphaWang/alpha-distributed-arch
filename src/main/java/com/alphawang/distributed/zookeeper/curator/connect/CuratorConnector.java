@@ -20,13 +20,14 @@ public class CuratorConnector {
     public CuratorConnector() {
         RetryPolicy retryPolicy = getRetryPolicy();
         
-        
         curatorFramework = CuratorFrameworkFactory.builder()
             .connectString(LOCAL_ZK_PATH)
             .sessionTimeoutMs(10000)
             .retryPolicy(retryPolicy)
             .namespace("curator_namespace")
             .build();
+        
+        log.warn("Connected Curator {}. Detail: {}", LOCAL_ZK_PATH, curatorFramework);
         
         curatorFramework.start();
     }
