@@ -6,19 +6,19 @@ import org.apache.zookeeper.ZooKeeper;
 
 import java.io.IOException;
 
+import static com.alphawang.distributed.zookeeper.Constants.LOCAL_ZK_PATH;
+
 @Slf4j
 @Getter
 public class ZKConnector {
 
-        private static final String zkServerPath = "127.0.0.1:2181";
-        //	public static final String zkServerPath = "192.168.1.111:2181,192.168.1.111:2182,192.168.1.111:2183";
         private static final Integer timeout = 500000;
 
         private ZooKeeper zooKeeper;
         
         public ZKConnector() {
             try {
-                zooKeeper = new ZooKeeper(zkServerPath, timeout, new ZKWatcher());
+                zooKeeper = new ZooKeeper(LOCAL_ZK_PATH, timeout, new ZKWatcher());
             } catch (IOException e) {
                 log.error("Failed to connect zk server.", e);
                 close();
@@ -52,7 +52,7 @@ public class ZKConnector {
              * sessionId：会话的id
              * sessionPasswd：会话密码	当会话丢失后，可以依据 sessionId 和 sessionPasswd 重新获取会话
              */
-            ZooKeeper zk = new ZooKeeper(zkServerPath, timeout, new ZKWatcher());
+            ZooKeeper zk = new ZooKeeper(LOCAL_ZK_PATH, timeout, new ZKWatcher());
 
             log.warn(">>> 客户端开始连接zookeeper服务器...");
             log.warn(">>> 连接状态：{}", zk.getState());

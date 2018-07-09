@@ -15,13 +15,14 @@ import org.apache.zookeeper.data.Stat;
 import java.io.IOException;
 import java.util.List;
 
+import static com.alphawang.distributed.zookeeper.Constants.LOCAL_ZK_PATH;
+
 @Slf4j
 @Data
 public class ZkNodeOperator {
     
     private ZooKeeper zooKeeper;
     
-    private static final String zkServerPath = "127.0.0.1:2181";
     private static final int timeout = 50000000;
     
     public ZkNodeOperator(String server) {
@@ -124,7 +125,7 @@ public class ZkNodeOperator {
     }
 
     public static void main(String[] args) {
-        ZkNodeOperator operator = new ZkNodeOperator(zkServerPath);
+        ZkNodeOperator operator = new ZkNodeOperator(LOCAL_ZK_PATH);
         
         operator.createZKNode("/testnode", "testnode-data".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE);
         operator.readZkNode("/testnode");
