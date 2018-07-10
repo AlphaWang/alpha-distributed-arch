@@ -2,8 +2,10 @@ package com.alphawang.distributed.zookeeper.curator.operate;
 
 import com.alphawang.distributed.zookeeper.curator.connect.CuratorConnector;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.ZooDefs;
+import org.apache.zookeeper.data.Stat;
 
 @Slf4j
 public class CuratorOperator {
@@ -23,16 +25,28 @@ public class CuratorOperator {
             .withMode(CreateMode.PERSISTENT)
             .withACL(ZooDefs.Ids.OPEN_ACL_UNSAFE)
             .forPath(nodePath, data.getBytes());
+
+        Stat stat = new Stat();
+        byte[] result = curatorConnector.getCuratorFramework()
+            .getData()
+            .storingStatIn(stat)
+            .forPath(nodePath);
+        log.info("---- 2. get data {} = {}, version = {}", nodePath, new String(result), stat.getVersion());
         
         data = "curator-data2";
-        log.info("---- 2. setting data {} = {}", nodePath, data);
+        log.info("---- 3. setting data {} = {}", nodePath, data);
         
         curatorConnector.getCuratorFramework()
             .setData()
             .withVersion(0)
             .forPath(nodePath, data.getBytes());
         
-        log.info("---- 3. deleting node {}", nodePath);
+        Stat statExists = curatorConnector.getCuratorFramework()
+            .checkExists()
+            .forPath(nodePath);
+        log.info("---- 4. check exists for node {}", nodePath, statExists);
+        
+        log.info("---- 4. deleting node {}", nodePath);
         
         curatorConnector.getCuratorFramework()
             .delete()
@@ -40,5 +54,10 @@ public class CuratorOperator {
             .deletingChildrenIfNeeded()
             .withVersion(0)
             .forPath(nodePath);
+
+        statExists = curatorConnector.getCuratorFramework()
+            .checkExists()
+            .forPath(nodePath);
+        log.info("---- 4. check exists for node {}", nodePath, statExists);
     }
 }
