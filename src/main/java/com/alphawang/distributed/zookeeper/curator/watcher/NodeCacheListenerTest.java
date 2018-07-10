@@ -25,14 +25,14 @@ public class NodeCacheListenerTest {
 
         getCurrentData(nodeCache);
         
-        
         nodeCache.getListenable().addListener(new NodeCacheListener() {
             @Override 
             public void nodeChanged() throws Exception {
+                log.warn("[NodeCacheListener] >>> Received Node Change Event.");
                 getCurrentData(nodeCache); 
             }
         });
-
+        
     }
     
     private static void getCurrentData(NodeCache nodeCache) {
