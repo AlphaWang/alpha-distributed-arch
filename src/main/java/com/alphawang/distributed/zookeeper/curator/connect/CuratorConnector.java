@@ -31,6 +31,12 @@ public class CuratorConnector {
         
         curatorFramework.start();
     }
+
+    public void close() {
+        if (curatorFramework != null) {
+            this.curatorFramework.close();
+        }
+    }
     
     private static RetryPolicy getRetryPolicy() {
         /**
