@@ -1,4 +1,4 @@
-package com.alphawang.distributed.zookeeper.curator.watcher;
+package com.alphawang.distributed.zookeeper.curator.listener;
 
 import com.alphawang.distributed.zookeeper.curator.connect.CuratorConnector;
 import lombok.extern.slf4j.Slf4j;
