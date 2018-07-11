@@ -38,7 +38,7 @@ public class PathChildrenCacheTest {
         pathChildrenCache.getListenable().addListener(new PathChildrenCacheListener() {
             @Override 
             public void childEvent(CuratorFramework client, PathChildrenCacheEvent event) throws Exception {
-                log.warn("[PathChildrenCacheListener] >>> Received PathChildrenCacheEvent. {}", event); 
+                log.warn("[PathChildrenCacheListener] >>> Received PathChildrenCacheEvent. type = {}, data = {}", event.getType(), event.getData()); 
             }
         });
 
