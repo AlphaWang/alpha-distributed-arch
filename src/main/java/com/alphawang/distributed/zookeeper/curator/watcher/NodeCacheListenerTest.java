@@ -6,10 +6,12 @@ import org.apache.curator.framework.recipes.cache.ChildData;
 import org.apache.curator.framework.recipes.cache.NodeCache;
 import org.apache.curator.framework.recipes.cache.NodeCacheListener;
 
+import java.util.concurrent.TimeUnit;
+
 @Slf4j
 public class NodeCacheListenerTest {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         CuratorConnector curatorConnector = new CuratorConnector();
         String nodePath = "/imooc/curator";
 
@@ -32,7 +34,9 @@ public class NodeCacheListenerTest {
                 getCurrentData(nodeCache); 
             }
         });
-        
+
+        TimeUnit.SECONDS.sleep(2);
+        curatorConnector.close();
     }
     
     private static void getCurrentData(NodeCache nodeCache) {

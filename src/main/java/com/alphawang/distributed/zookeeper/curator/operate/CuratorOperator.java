@@ -7,6 +7,8 @@ import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.ZooDefs;
 import org.apache.zookeeper.data.Stat;
 
+import java.util.concurrent.TimeUnit;
+
 @Slf4j
 public class CuratorOperator {
 
@@ -59,5 +61,8 @@ public class CuratorOperator {
             .checkExists()
             .forPath(nodePath);
         log.info("---- 4. check exists for node {}", nodePath, statExists);
+
+        TimeUnit.SECONDS.sleep(10);
+        curatorConnector.close();
     }
 }
