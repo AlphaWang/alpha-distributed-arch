@@ -11,7 +11,8 @@ import org.apache.zookeeper.data.Stat;
 
 import java.util.concurrent.CountDownLatch;
 
-@Slf4j public class DistributedLock {
+@Slf4j 
+public class DistributedLock {
 
     private CuratorFramework curatorFramework;
 
