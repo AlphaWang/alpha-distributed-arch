@@ -1,16 +1,17 @@
 package com.alphawang.distributed.hystrix;
 
-import com.alphawang.distributed.util.Printer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class StockService {
 
 	public Integer getStock(Long id) {
-		Printer.print("-- Running StockService.getStock() " + id);
+		log.info("-- Running StockService.getStock() for {}", id);
 		if (id % 2 == 0) {
 			System.err.println("ERROR in service.");
 			throw new RuntimeException("Random Exception.");
@@ -20,7 +21,7 @@ public class StockService {
 	}
 
 	public List<Integer> getStocks(List<Long> ids) {
-		Printer.print("-- Running StockService.getStocks() " + ids);
+		log.info("-- Running StockService.getStocks() for {}", ids);
 		return ids.stream()
 			.map(Long::intValue)
 			.collect(Collectors.toList());
