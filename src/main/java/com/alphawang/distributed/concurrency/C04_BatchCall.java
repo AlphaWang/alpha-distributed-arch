@@ -4,6 +4,7 @@ import com.alphawang.distributed.concurrency.mock.HttpService;
 import com.alphawang.distributed.util.Printer;
 import com.google.common.base.Stopwatch;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -41,14 +42,14 @@ import java.util.stream.Collectors;
  * [5590] [ForkJoinPool.commonPool-worker-2] allOf().applyAsync() join (+1500ms delay). [HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay]
  * [5590] [main] >>>>>> Got result : [HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay, HTTP Result with 2000ms delay]
  */
+@Slf4j
 public class C04_BatchCall {
 
 	public static void main(String[] args) throws ExecutionException, InterruptedException {
 		List<CompletableFuture<String>> futures = Lists.newArrayList();
 		HttpService httpService = new HttpService();
 
-		Stopwatch stopwatch = Stopwatch.createStarted();
-		Printer.printLatency(stopwatch, "START");
+		log.warn("START");
 
 		for (int i = 0; i <= 10; i++) {
 			futures.add(CompletableFuture.supplyAsync(new Supplier<String>() {
@@ -60,12 +61,12 @@ public class C04_BatchCall {
 		}
 
 		CompletableFuture<Void> allOf = CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]));
-		Printer.printLatency(stopwatch, ">>>>>> Try Future.get()");
+		log.info(">>>>>> Try Future.get()");
 		Void s = allOf.get();
-		Printer.printLatency(stopwatch,">>>>>> Got result : " + s);
+		log.info(">>>>>> Got result, allOf.get() = {}", s);
 
 		CompletableFuture<List<String>> applyAsync = allOf.thenApplyAsync(v -> {
-			Printer.printLatency(stopwatch, "allOf().applyAsync() start.");
+			log.info("allOf().applyAsync() start.");
 			try {
 				Thread.sleep(1500);
 			} catch (InterruptedException e) {
@@ -76,13 +77,13 @@ public class C04_BatchCall {
 				.map(future -> future.join())
 				.collect(Collectors.toList());
 
-			Printer.printLatency(stopwatch, "allOf().applyAsync() join (+1500ms delay). " + response);
+			log.info("allOf().applyAsync() join (+1500ms delay), response = {}", response);
 			return response;
 		});
 
-		Printer.printLatency(stopwatch, ">>>>>> Try applyAsync.get()");
+		log.info(">>>>>> Try applyAsync.get()");
 		List<String> result = applyAsync.get();
-		Printer.printLatency(stopwatch,">>>>>> Got result : " + result);
+		log.info(">>>>>> Got result : applyAsync.get() = {}", result);
 	}
 
 
