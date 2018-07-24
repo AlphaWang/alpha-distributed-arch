@@ -89,6 +89,13 @@ public class C04_ForkJoinNormal {
 			// 如果任务足够小，就计算任务
 			boolean canCompute = (end - start) <= THRESHOLD;
 			if (canCompute) {
+
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				
 				log.info("computing from " + start + " to " + end);
 				for (int i = start; i <= end; i++) {
 					sum += i;
