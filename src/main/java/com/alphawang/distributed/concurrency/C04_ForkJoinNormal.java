@@ -1,7 +1,6 @@
 package com.alphawang.distributed.concurrency;
 
-import com.alphawang.distributed.util.Printer;
-import com.google.common.base.Stopwatch;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ForkJoinPool;
@@ -51,27 +50,25 @@ import java.util.concurrent.RecursiveTask;
  *
  * [16] [main] Get result: 5050
  */
+@Slf4j
 public class C04_ForkJoinNormal {
 
-	static Stopwatch stopwatch = Stopwatch.createStarted();
 
 	public static void main(String[] args) {
 
-		Printer.printLatency(stopwatch, "START");
+		log.warn("START");
 
 		ForkJoinPool pool = new ForkJoinPool(4);
 		CountTask task = new CountTask(1, 100);
 
-		Printer.printLatency(stopwatch, "forkJoinPool.submit()");
+		log.info("forkJoinPool.submit()");
 		Future<Integer> future = pool.submit(task);
 		try {
 			int sum = future.get();
-			Printer.printLatency(stopwatch, "Get result: " + sum);
+			log.info("Get result: " + sum);
 		} catch (InterruptedException | ExecutionException e) {
 			e.printStackTrace();
 		}
-
-		stopwatch.stop();
 	}
 
 
@@ -92,7 +89,7 @@ public class C04_ForkJoinNormal {
 			// 如果任务足够小，就计算任务
 			boolean canCompute = (end - start) <= THRESHOLD;
 			if (canCompute) {
-				Printer.printLatency(stopwatch, "computing from " + start + " to " + end);
+				log.info("computing from " + start + " to " + end);
 				for (int i = start; i <= end; i++) {
 					sum += i;
 				}
