@@ -16,6 +16,10 @@ public class HystrixRequestCacheCommand extends HystrixCommand<Integer> {
 		this.stockService = stockService;
 	}
 
+	/**
+	 * Inline: ConcurrentHashMap
+	 * ﻿com.netflix.hystrix.AbstractCommand#toObservable
+	 */
 	private static Setter setter() {
 		HystrixCommandGroupKey groupKey = HystrixCommandGroupKey.Factory.asKey("stock.cache");
 

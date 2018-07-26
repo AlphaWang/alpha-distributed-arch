@@ -37,8 +37,8 @@ public class HystrixRequestCacheTest {
 			HystrixRequestCacheCommand cacheCommand1 = new HystrixRequestCacheCommand(stockService, 1L);
 			HystrixRequestCacheCommand cacheCommand2 = new HystrixRequestCacheCommand(stockService, 1L);
 
-			cacheCommand1.execute();
-			cacheCommand2.execute();
+			Integer result1 = cacheCommand1.execute();
+			Integer result2 = cacheCommand2.execute();
 
 			log.info("1st request from cache? {}", cacheCommand1.isResponseFromCache());
 			log.info("2nd request from cache? {}", cacheCommand2.isResponseFromCache());
