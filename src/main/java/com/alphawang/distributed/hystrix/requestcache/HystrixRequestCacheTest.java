@@ -3,6 +3,7 @@ package com.alphawang.distributed.hystrix.requestcache;
 import com.alphawang.distributed.hystrix.StockService;
 import com.alphawang.distributed.util.Printer;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * 原理：
@@ -10,6 +11,7 @@ import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
  * 在异步线程执行之前注入  ThreadLocal HystrixRequestContext，
  * 从而实现请求级别的缓存
  */
+@Slf4j
 public class HystrixRequestCacheTest {
 
 	public static void main(String[] args) {
@@ -38,8 +40,8 @@ public class HystrixRequestCacheTest {
 			cacheCommand1.execute();
 			cacheCommand2.execute();
 
-			Printer.print("1st request from cache? " + cacheCommand1.isResponseFromCache());
-			Printer.print("2nd request from cache? " + cacheCommand2.isResponseFromCache());
+			log.info("1st request from cache? {}", cacheCommand1.isResponseFromCache());
+			log.info("2nd request from cache? {}", cacheCommand2.isResponseFromCache());
 		} finally {
 			context.shutdown();
 		}
