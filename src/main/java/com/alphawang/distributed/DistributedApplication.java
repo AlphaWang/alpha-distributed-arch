@@ -47,6 +47,7 @@ public class DistributedApplication {
         /**
          * springApplication.run 返回context
          */
+        // 有异常？ no
         ConfigurableApplicationContext context = springApplication.run(args);
         log.info("get bean {}", context.getBean(DistributedApplication.class));
     }
