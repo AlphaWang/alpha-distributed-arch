@@ -12,7 +12,6 @@ import org.apache.http.nio.protocol.HttpAsyncRequestProducer;
 
 import java.util.concurrent.CompletableFuture;
 
-import static com.alphawang.distributed.util.Printer.print;
                      
 /**
  * Created by Alpha on 1/4/18.
@@ -54,7 +53,7 @@ public class C02_HttpAsyncClient_FutureCallbackTest {
 			@Override
 			public void completed(HttpResponse response) {
 				log.info("==== Callback Completed. " + url);
-				print(response.getAllHeaders());
+				log.info("response headers: {}", response.getAllHeaders());
 				asyncFuture.complete(response);
 			}
 

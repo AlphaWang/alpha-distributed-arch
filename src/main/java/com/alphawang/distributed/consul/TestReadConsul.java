@@ -6,13 +6,13 @@ import com.orbitz.consul.ConsulException;
 import com.orbitz.consul.KeyValueClient;
 import com.orbitz.consul.model.kv.Value;
 import com.orbitz.consul.option.QueryOptions;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigInteger;
 import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import static com.alphawang.distributed.util.Printer.print;
 
 /**
  * ﻿consul 启动：
@@ -26,6 +26,7 @@ import static com.alphawang.distributed.util.Printer.print;
  * $ curl http://127.0.0.1:8500/v1/kv/item_tomcat/user.not.call.backend
  * [{"LockIndex":0,"Key":"item_tomcat/user.not.call.backend","Flags":0,"Value":"dHJ1ZQ==","CreateIndex":24,"ModifyIndex":24}]
  */
+@Slf4j
 public class TestReadConsul {
 
 	private static transient Properties properties;
@@ -52,12 +53,12 @@ public class TestReadConsul {
 						Properties _pro = new Properties();
 						List<Value> values = keyValueClient.getValues(system, QueryOptions.blockSeconds(30, index).build());
 						for (Value value : values) {
-							print("get value:" + value);
+							log.info("get value:" + value);
 							_pro.put(value.getKey(), value.getValueAsString().orNull());
 							index = index.max(BigInteger.valueOf(value.getModifyIndex()));
 						}
 						properties = _pro;
-						print(properties);
+						log.info("read properties: {}", properties);
 					} catch (ConsulException e) {
 						e.printStackTrace();
 						if (e.getCode() == 404) {

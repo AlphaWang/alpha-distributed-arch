@@ -1,7 +1,6 @@
 package com.alphawang.distributed.hystrix.requestcache;
 
 import com.alphawang.distributed.hystrix.StockService;
-import com.alphawang.distributed.util.Printer;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
 import lombok.extern.slf4j.Slf4j;
 

@@ -2,7 +2,6 @@ package com.alphawang.distributed.concurrency;
 
 import com.alphawang.distributed.concurrency.mock.HttpService;
 import com.alphawang.distributed.concurrency.mock.RpcService;
-import com.alphawang.distributed.util.Printer;
 import com.google.common.base.Stopwatch;
 import lombok.extern.slf4j.Slf4j;
 
