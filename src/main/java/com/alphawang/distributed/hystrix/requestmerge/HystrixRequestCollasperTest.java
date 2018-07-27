@@ -1,8 +1,8 @@
 package com.alphawang.distributed.hystrix.requestmerge;
 
 import com.alphawang.distributed.hystrix.StockService;
-import com.alphawang.distributed.util.Printer;
 import com.netflix.hystrix.strategy.concurrency.HystrixRequestContext;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -12,6 +12,7 @@ import java.util.concurrent.Future;
  * -- Running StockService.getStocks() [1]
  * -- Running StockService.getStocks() [2, 3]
  */
+@Slf4j
 public class HystrixRequestCollasperTest {
 
 	public static void main(String[] args) throws ExecutionException, InterruptedException {
@@ -33,11 +34,11 @@ public class HystrixRequestCollasperTest {
 			Future<Integer> future4 = command4.queue();
 			Future<Integer> future5 = command5.queue();
 
-			Printer.print("result 1: " + future1.get());
-			Printer.print("result 2: " + future2.get());
-			Printer.print("result 3: " + future3.get());
-			Printer.print("result 4: " + future4.get());
-			Printer.print("result 5: " + future5.get());
+			log.info("result 1: " + future1.get());
+			log.info("result 2: " + future2.get());
+			log.info("result 3: " + future3.get());
+			log.info("result 4: " + future4.get());
+			log.info("result 5: " + future5.get());
 		} finally {
 			requestContext.shutdown();
 		}
