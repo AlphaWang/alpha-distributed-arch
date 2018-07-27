@@ -43,5 +43,11 @@ public class DistributedApplication {
         Map<String, Object> properties = new LinkedHashMap<>();
         properties.put("server.port", 0);
         springApplication.setDefaultProperties(properties);
+
+        /**
+         * springApplication.run 返回context
+         */
+        ConfigurableApplicationContext context = springApplication.run(args);
+        log.info("get bean {}", context.getBean(DistributedApplication.class));
     }
 }
