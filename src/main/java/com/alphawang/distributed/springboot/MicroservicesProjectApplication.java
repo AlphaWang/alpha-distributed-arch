@@ -28,13 +28,13 @@ public class MicroservicesProjectApplication {
         springApplication.setWebApplicationType(WebApplicationType.NONE);
         ConfigurableApplicationContext context = springApplication.run(args);
         
-        // 有异常？
+        // 有异常？ no
         log.info("get bean: {}", context.getBean(MicroservicesProjectApplication.class));
 
         /**
          * 输出当前 Spring Boot 应用的 ApplicationContext 的类名:
-         *  
          * org.springframework.context.annotation.AnnotationConfigApplicationContext
+         * 
          *  == SpringAnnotationDemo
          *  == SpringApplication#DEFAULT_CONTEXT_CLASS
          */

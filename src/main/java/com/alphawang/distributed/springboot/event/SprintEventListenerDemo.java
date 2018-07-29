@@ -1,4 +1,4 @@
-package com.alphawang.distributed.springboot;
+package com.alphawang.distributed.springboot.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
@@ -10,6 +10,10 @@ import org.springframework.context.support.GenericApplicationContext;
 @Slf4j
 public class SprintEventListenerDemo {
 
+    /**
+     * 发送 Spring 事件通过  ApplicationEventMulticaster#multicastEvent(ApplicationEvent, ResolvableType)
+     * @param args
+     */
     public static void main(String[] args) {
         GenericApplicationContext context = new GenericApplicationContext();
 
@@ -39,13 +43,16 @@ public class SprintEventListenerDemo {
          * 648  ms [INFO ] [main            ] SprintEventListenerDemo:18 
          * - 收到事件 org.springframework.context.PayloadApplicationEvent
          *          [source=org.springframework.context.support.GenericApplicationContext@67b467e9: startup date [Sat Jul 28 19:56:13 CST 2018]; root of context hierarchy]
-         */
+         *
+         * 为什么会有两个事件？ ContextRefreshedEvent + PayloadApplicationEvent？
+         * --> 
+         * /
         // `Spring应用上下文` 发布事件
         context.publishEvent("HelloWorld");
 
         /**
          * 531  ms [INFO ] [main            ] SprintEventListenerDemo:19 
-         * - 收到事件 com.alphawang.distributed.springboot.SprintEventListenerDemo$MyEven
+         * - 收到事件 com.alphawang.distributed.springboot.event.SprintEventListenerDemo$MyEven
          * [source=My Event Arg.]
          * 
          */
