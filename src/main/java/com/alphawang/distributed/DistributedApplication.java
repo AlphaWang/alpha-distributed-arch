@@ -5,6 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -50,5 +51,24 @@ public class DistributedApplication {
         // 有异常？ no
         ConfigurableApplicationContext context = springApplication.run(args);
         log.info("get bean {}", context.getBean(DistributedApplication.class));
+
+        /**
+         * 显式地设置双亲上下文
+         * 
+         * /actuator/beans 可以看到有三个contexts
+         * 
+         * bootstrap (spring-cloud会增加bootstrap上下文)
+         *   pContext-1
+         *      application-context
+         */
+        AnnotationConfigApplicationContext pContext = new AnnotationConfigApplicationContext();
+        pContext.setId("pContext-1");
+        pContext.registerBean("helloWorld", String.class, "Hello World.");
+        pContext.refresh();
+        new SpringApplicationBuilder(DistributedApplication.class)
+            // 显式地设置双亲上下文
+            .parent(pContext)
+            .run(args);
+            
     }
 }
