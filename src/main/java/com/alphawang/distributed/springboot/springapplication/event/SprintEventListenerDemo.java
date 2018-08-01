@@ -1,4 +1,4 @@
-package com.alphawang.distributed.springboot.event;
+package com.alphawang.distributed.springboot.springapplication.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEvent;
