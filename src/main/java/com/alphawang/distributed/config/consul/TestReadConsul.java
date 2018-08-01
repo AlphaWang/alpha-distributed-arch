@@ -1,4 +1,4 @@
-package com.alphawang.distributed.consul;
+package com.alphawang.distributed.config.consul;
 
 import com.google.common.net.HostAndPort;
 import com.orbitz.consul.Consul;
@@ -32,7 +32,8 @@ public class TestReadConsul {
 	private static transient Properties properties;
 	private static transient String system = "item_tomcat";
 
-	static {
+	public static void main(String[] args) {
+		
 		Consul consul = Consul.builder()
 			.withHostAndPort(HostAndPort.fromString("127.0.0.1:8500"))
 			.withConnectTimeoutMillis(1000)
@@ -69,7 +70,7 @@ public class TestReadConsul {
 							}
 						}
 					}
-					
+
 					if (needBreak.get() == true) {
 						break;
 					}
@@ -81,10 +82,5 @@ public class TestReadConsul {
 		thread.run();
 		needBreak.set(false);
 		thread.start();
-	}
-
-
-	public static void main(String[] args) {
-		
 	}
 }
