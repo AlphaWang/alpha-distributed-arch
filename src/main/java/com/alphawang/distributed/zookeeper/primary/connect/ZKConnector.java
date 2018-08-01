@@ -8,6 +8,10 @@ import java.io.IOException;
 
 import static com.alphawang.distributed.zookeeper.Constants.LOCAL_ZK_PATH;
 
+/**
+ * run:
+ * zkServer start
+ */
 @Slf4j
 @Getter
 public class ZKConnector {
